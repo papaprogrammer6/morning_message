@@ -16,6 +16,10 @@ body {
   justify-content: center;
   height: 100vh;
 }
+h2 {
+  margin-bottom: 20px;
+  color: #ff5c8a;
+}
 .card-container {
   perspective: 1000px;
 }
@@ -77,6 +81,7 @@ body {
   letter-spacing: 1px;
   text-align: center;
 }
+/* Smooth notification */
 #notify {
   position: fixed;
   top: 20px;
@@ -102,6 +107,8 @@ button {
   color: white;
   cursor: pointer;
 }
+
+/* Mobile responsiveness */
 @media (max-width: 480px) {
   .card {
     width: 180px;
@@ -138,8 +145,7 @@ button {
 <div class="timer" id="timer">💖 Click the card!</div>
 <div id="notify">💖 Come back tomorrow for the next card!</div>
 
-<button id="reset">Reset Timer</button>
-<button id="testNext">Test Next Day</button>
+<button id="reset">badel itaswira</button>
 
 <script>
 const backgrounds = [
@@ -152,36 +158,36 @@ const backgrounds = [
 ];
 
 const messages = [
-"Nhebk b 9albii kol 💖 enti kol chay fi 7yeti 😘",
-"Manajmch nhot 7ad ghirk f 9albi 💞",
-"Kif nkalmk nensa l dinya 💫",
-"Enti ro7i w habyby w kol chay liya 💋",
-"Kol ma nra 3inik 9albi ydo9 🌸",
-"Ble bik 7yeti ma 3andha ta3m 😔❤️",
-"Nchouf fik 9ad ma nhbk 💕",
-"Enti a7la msiba saretli f 7yeti 💘",
-"Kif tkoun m3aya nansa l3alam 🌍💞",
-"Rabi ykhallik lia w may7rmnich mnek 🤲❤️",
-"Nhebek aktar men lkalemat ltnajem t3aber 💞",
-"Kif nra esmkk 9albi ybda ych3el blfar7a🔥💖",
-"Tawa b3id 3lik ama 9albi 3andk 💌",
-"Nhebb nsma3 soutk 9bal manor9od 😴❤️",
-"Enti li dima fi bali w fi 9albi 💭💞",
-"Kol nhar ma3ak ybda b far7a 🌅💗",
-"Enti li 3meltni n3rf chnouwa l7ob 💕",
-"Rou7i terta7 ki tkoun 7adheya 💞😌",
-"Nheb n3ich m3ak 7yeti kmla ❤️‍🔥",
-"Law kan el7ob kalma, ana nkol enti 💝",
-"Kol mara n7s bik n7s b s3ada 💫💋",
-"Bila tha7ktk mta3k nhari ma ykamlch ☀️😘",
-"9albi ybda yebki ki tghib 3liya la7dha 🥺❤️",
-"Kif tadh7ek tdhwbli 9albi 🫶💞",
-"Nhebk men 9albi, b dami w b rou7i ❤️🇹🇳",
-"twa7chtek aktar meli tetsawer 😔💌",
-"Nhebk lyom aktar men lbar7 💖",
-"Kol nji nor9ed  n3ayetlek fi beli 💭❤️",
-"3omri ma nheb 7ad 8irek 💘",
-"N7s rou7i m3ak fi  3alam e5er 🫶🌍"
+  "Nhebk b 9albii kol 💖 enti kol chay fi 7yeti 😘",
+  "Manajmch nhot 7ad ghirk f 9albi 💞",
+  "Kif nkalmk nensa l dinya 💫",
+  "Enti ro7i w habyby w kol chay liya 💋",
+  "Kol ma nra 3inik 9albi ydo9 🌸",
+  "Ble bik 7yeti ma 3andha ta3m 😔❤️",
+  "Nchouf fik 9ad ma nhbk 💕",
+  "Enti a7la msiba saretli f 7yeti 💘",
+  "Kif tkoun m3aya nansa l3alam 🌍💞",
+  "Rabi ykhallik lia w may7rmnich mnek 🤲❤️",
+  "Nhebek aktar men lkalemat ltnajem t3aber 💞",
+  "Kif nra esmkk 9albi ybda ych3el blfar7a🔥💖",
+  "Tawa b3id 3lik ama 9albi 3andk 💌",
+  "Nhebb nsma3 soutk 9bal manor9od 😴❤️",
+  "Enti li dima fi bali w fi 9albi 💭💞",
+  "Kol nhar ma3ak ybda b far7a 🌅💗",
+  "Enti li 3meltni n3rf chnouwa l7ob 💕",
+  "Rou7i terta7 ki tkoun 7adheya 💞😌",
+  "Nheb n3ich m3ak 7yeti kmla ❤️‍🔥",
+  "Law kan el7ob kalma, ana nkol enti 💝",
+  "Kol mara n7s bik n7s b s3ada 💫💋",
+  "Bila tha7ktk mta3k nhari ma ykamlch ☀️😘",
+  "9albi ybda yebki ki tghib 3liya la7dha 🥺❤️",
+  "Kif tadh7ek tdhwbli 9albi 🫶💞",
+  "Nhebk men 9albi, b dami w b rou7i ❤️🇹🇳",
+  "twa7chtek aktar meli tetsawer 😔💌",
+  "Nhebk lyom aktar men lbar7 💖",
+  "Kol nji nor9ed  n3ayetlek fi beli 💭❤️",
+  "3omri ma nheb 7ad 8irek 💘",
+  "N7s rou7i m3ak fi  3alam e5er 🫶🌍"
 ];
 
 const card = document.getElementById("card");
@@ -190,52 +196,45 @@ const messageEl = document.getElementById("message");
 const timerEl = document.getElementById("timer");
 const notifyEl = document.getElementById("notify");
 
-// Initialize today
-let todayBg = localStorage.getItem("todayBg") || backgrounds[Math.floor(Math.random() * backgrounds.length)];
+let todayBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
 front.style.background = `url(${todayBg}) center/cover no-repeat`;
 
 let nextUnlock = localStorage.getItem("nextUnlock");
 let todayMessage = localStorage.getItem("todayMessage");
-let currentIndex = parseInt(localStorage.getItem("currentIndex")) || 0;
+let savedBg = localStorage.getItem("todayBg");
 
-// Restore previous state
-function restoreState() {
-  const now = new Date();
-  if (todayMessage && nextUnlock && now < new Date(nextUnlock)) {
-    card.classList.add("flipped");
-    messageEl.innerText = todayMessage;
-    front.style.background = `url(${todayBg}) center/cover no-repeat`;
-  } else {
-    card.classList.remove("flipped");
-    timerEl.innerText = "💖 Click the card!";
-    card.classList.add("pulse");
-  }
+// Restore previous flipped card if already unlocked
+if (todayMessage && nextUnlock && new Date() < new Date(nextUnlock)) {
+  card.classList.add("flipped");
+  messageEl.innerText = todayMessage;
+  if (savedBg) front.style.background = `url(${savedBg}) center/cover no-repeat`;
+} else {
+  card.classList.remove("flipped");
 }
-restoreState();
 
-// Update countdown
 function updateTimer() {
-  const now = new Date();
   if (!nextUnlock) {
     timerEl.innerText = "💖 Click the card!";
+    card.classList.remove("pulse");
     return;
   }
+  const now = new Date();
   const diff = new Date(nextUnlock) - now;
   if (diff <= 0) {
-    // Automatically reset for next day
-    card.classList.remove("flipped");
-    card.classList.add("pulse");
     timerEl.innerText = "💖 Click the card!";
+    card.classList.add("pulse");
+    return;
   } else {
-    const hours = Math.floor(diff / 3600000);
-    const minutes = Math.floor((diff % 3600000) / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-    timerEl.innerText = `Next card in ${hours.toString().padStart(2,'0')}h ${minutes.toString().padStart(2,'0')}m ${seconds.toString().padStart(2,'0')}s ⏳`;
+    card.classList.remove("pulse");
   }
+  const hours = Math.floor(diff / 3600000);
+  const minutes = Math.floor((diff % 3600000) / 60000);
+  const seconds = Math.floor((diff % 60000) / 1000);
+  timerEl.innerText = `Next card in ${hours.toString().padStart(2,'0')}h ${minutes.toString().padStart(2,'0')}m ${seconds.toString().padStart(2,'0')}s ⏳`;
 }
 setInterval(updateTimer, 1000);
+updateTimer();
 
-// Show notification
 function showNotification(text) {
   notifyEl.innerText = text;
   notifyEl.style.opacity = "1";
@@ -246,10 +245,8 @@ function showNotification(text) {
   }, 2000);
 }
 
-// Flip card
 card.addEventListener("click", () => {
-  const now = new Date();
-  if (nextUnlock && now < new Date(nextUnlock)) {
+  if (nextUnlock && new Date() < new Date(nextUnlock)) {
     showNotification("ya ro7i 8odwa arja3 wlh 3raftek hhh 😂");
     return;
   }
@@ -258,9 +255,10 @@ card.addEventListener("click", () => {
   card.classList.add("flipped");
 
   setTimeout(() => {
+    // orderly message system
+    let currentIndex = parseInt(localStorage.getItem("currentIndex")) || 0;
     todayMessage = messages[currentIndex % messages.length];
-    currentIndex++;
-    localStorage.setItem("currentIndex", currentIndex);
+    localStorage.setItem("currentIndex", currentIndex + 1);
 
     messageEl.innerText = todayMessage;
 
@@ -272,7 +270,7 @@ card.addEventListener("click", () => {
     tomorrow.setHours(0,0,0,0);
     nextUnlock = tomorrow;
 
-    localStorage.setItem("nextUnlock", nextUnlock);
+    localStorage.setItem("nextUnlock", tomorrow);
     localStorage.setItem("todayMessage", todayMessage);
     localStorage.setItem("todayBg", todayBg);
 
@@ -280,23 +278,18 @@ card.addEventListener("click", () => {
   }, 500);
 });
 
-// Reset button
 document.getElementById("reset").addEventListener("click", () => {
-  localStorage.clear();
+  localStorage.removeItem("nextUnlock");
+  localStorage.removeItem("todayMessage");
+  localStorage.removeItem("todayBg");
+  localStorage.removeItem("currentIndex");
   card.classList.remove("flipped", "pulse");
   messageEl.innerText = "";
   todayBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
   front.style.background = `url(${todayBg}) center/cover no-repeat`;
   nextUnlock = null;
-  currentIndex = 0;
-  timerEl.innerText = "💖 Click the card!";
-});
-
-// Test button (simulate next day)
-document.getElementById("testNext").addEventListener("click", () => {
-  nextUnlock = new Date(Date.now() - 1000); // set nextUnlock to past
+  todayMessage = null;
   updateTimer();
-  showNotification("💌 Next day's card is ready!");
 });
 </script>
 </body>
