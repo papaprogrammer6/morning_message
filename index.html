@@ -138,7 +138,8 @@ button {
 <div class="timer" id="timer">💖 Click the card!</div>
 <div id="notify">💖 Come back tomorrow for the next card!</div>
 
-
+<button id="reset">Reset Timer</button>
+<button id="testNext">Test Next Day</button>
 
 <script>
 const backgrounds = [
@@ -189,28 +190,17 @@ const messageEl = document.getElementById("message");
 const timerEl = document.getElementById("timer");
 const notifyEl = document.getElementById("notify");
 
-// Initialize today
-let todayBg = localStorage.getItem("todayBg") || backgrounds[Math.floor(Math.random() * backgrounds.length)];
+// Load saved state
+let todayBg = localStorage.getItem("todayBg") || backgrounds[Math.floor(Math.random()*backgrounds.length)];
+let todayMessage = localStorage.getItem("todayMessage") || messages[parseInt(localStorage.getItem("currentIndex")) || 0];
+let currentIndex = parseInt(localStorage.getItem("currentIndex")) || 0;
+let nextUnlock = localStorage.getItem("nextUnlock");
+
 front.style.background = `url(${todayBg}) center/cover no-repeat`;
 
-let nextUnlock = localStorage.getItem("nextUnlock");
-let todayMessage = localStorage.getItem("todayMessage");
-let currentIndex = parseInt(localStorage.getItem("currentIndex")) || 0;
-
-// Restore previous state
-function restoreState() {
-  const now = new Date();
-  if (todayMessage && nextUnlock && now < new Date(nextUnlock)) {
-    card.classList.add("flipped");
-    messageEl.innerText = todayMessage;
-    front.style.background = `url(${todayBg}) center/cover no-repeat`;
-  } else {
-    card.classList.remove("flipped");
-    timerEl.innerText = "💖 Click the card!";
-    card.classList.add("pulse");
-  }
-}
-restoreState();
+// Reset card visually on reload
+card.classList.remove("flipped");
+card.classList.add("pulse");
 
 // Update countdown
 function updateTimer() {
@@ -221,7 +211,7 @@ function updateTimer() {
   }
   const diff = new Date(nextUnlock) - now;
   if (diff <= 0) {
-    // Automatically reset for next day
+    // New day unlocked automatically
     card.classList.remove("flipped");
     card.classList.add("pulse");
     timerEl.innerText = "💖 Click the card!";
@@ -232,9 +222,9 @@ function updateTimer() {
     timerEl.innerText = `Next card in ${hours.toString().padStart(2,'0')}h ${minutes.toString().padStart(2,'0')}m ${seconds.toString().padStart(2,'0')}s ⏳`;
   }
 }
-setInterval(updateTimer, 1000);
+setInterval(updateTimer,1000);
 
-// Show notification
+// Notification
 function showNotification(text) {
   notifyEl.innerText = text;
   notifyEl.style.opacity = "1";
@@ -242,58 +232,56 @@ function showNotification(text) {
   setTimeout(() => {
     notifyEl.style.opacity = "0";
     notifyEl.style.transform = "translateX(-50%) translateY(-20px)";
-  }, 2000);
+  },2000);
 }
 
 // Flip card
-card.addEventListener("click", () => {
+card.addEventListener("click", ()=>{
   const now = new Date();
-  if (nextUnlock && now < new Date(nextUnlock)) {
+  if(nextUnlock && now < new Date(nextUnlock)){
     showNotification("ya ro7i 8odwa arja3 wlh 3raftek hhh 😂");
     return;
   }
-
   card.classList.remove("pulse");
   card.classList.add("flipped");
-
-  setTimeout(() => {
+  setTimeout(()=>{
     todayMessage = messages[currentIndex % messages.length];
-    currentIndex++;
-    localStorage.setItem("currentIndex", currentIndex);
-
     messageEl.innerText = todayMessage;
 
-    todayBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+    todayBg = backgrounds[Math.floor(Math.random()*backgrounds.length)];
     front.style.background = `url(${todayBg}) center/cover no-repeat`;
 
     const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setDate(tomorrow.getDate()+1);
     tomorrow.setHours(0,0,0,0);
     nextUnlock = tomorrow;
 
-    localStorage.setItem("nextUnlock", nextUnlock);
+    currentIndex++;
     localStorage.setItem("todayMessage", todayMessage);
     localStorage.setItem("todayBg", todayBg);
+    localStorage.setItem("nextUnlock", nextUnlock);
+    localStorage.setItem("currentIndex", currentIndex);
 
     updateTimer();
-  }, 500);
+  },500);
 });
 
-// Reset button
-document.getElementById("reset").addEventListener("click", () => {
+// Reset
+document.getElementById("reset").addEventListener("click",()=>{
   localStorage.clear();
-  card.classList.remove("flipped", "pulse");
-  messageEl.innerText = "";
-  todayBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+  card.classList.remove("flipped","pulse");
+  card.classList.add("pulse");
+  todayBg = backgrounds[Math.floor(Math.random()*backgrounds.length)];
   front.style.background = `url(${todayBg}) center/cover no-repeat`;
-  nextUnlock = null;
-  currentIndex = 0;
   timerEl.innerText = "💖 Click the card!";
+  currentIndex = 0;
+  todayMessage = "";
+  nextUnlock = null;
 });
 
-// Test button (simulate next day)
-document.getElementById("testNext").addEventListener("click", () => {
-  nextUnlock = new Date(Date.now() - 1000); // set nextUnlock to past
+// Test next day
+document.getElementById("testNext").addEventListener("click",()=>{
+  nextUnlock = new Date(Date.now()-1000); // force unlock
   updateTimer();
   showNotification("💌 Next day's card is ready!");
 });
