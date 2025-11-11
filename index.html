@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Love Card</title>
+<style>
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at center, #0b0c0c, #000);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+.card-container {
+  perspective: 1000px;
+}
+.card {
+  width: 250px;
+  height: 350px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(198,169,255,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 1s, box-shadow 0.5s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+.card.flipped {
+  transform: rotateY(180deg);
+}
+.card.pulse {
+  animation: glow 1.5s infinite alternate;
+}
+@keyframes glow {
+  0% { box-shadow: 0 0 15px #ff9ed9, 0 0 25px #ff7fa3; }
+  100% { box-shadow: 0 0 25px #ff9ed9, 0 0 40px #ff7fa3; }
+}
+.card .front, .card .back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 15px;
+}
+.card .front {
+  background-size: cover;
+  background-position: center;
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+}
+.card .back {
+  transform: rotateY(180deg);
+  background: rgba(255,224,240,0.9);
+  color: #ff4b7b;
+  font-size: 1.6rem;
+}
+.timer {
+  margin-top: 20px;
+  color: #ff9ed9;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-align: center;
+}
+#notify {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 120, 160, 0.9);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 15px;
+  font-weight: bold;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s, transform 0.5s;
+  z-index: 1000;
+  text-align: center;
+}
+button {
+  margin-top: 15px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 10px;
+  background: #ff7fa3;
+  color: white;
+  cursor: pointer;
+}
+@media (max-width: 480px) {
+  .card {
+    width: 180px;
+    height: 250px;
+    font-size: 1.2rem;
+  }
+  .card .back {
+    font-size: 1.2rem;
+    padding: 10px;
+  }
+  .timer {
+    font-size: 16px;
+  }
+  #notify {
+    font-size: 12px;
+    padding: 10px 15px;
+    transform:scale(.5);
+  }
+  button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="card-container">
+  <div class="card" id="card">
+    <div class="front" id="front"></div>
+    <div class="back" id="message"></div>
+  </div>
+</div>
+<div class="timer" id="timer">💖 Click the card!</div>
+<div id="notify">💖 Come back tomorrow for the next card!</div>
+
+
+
+<script>
+const backgrounds = [
+"https://i.pinimg.com/736x/f5/2c/85/f52c85acd8c88850ec9ac89d9aee8120.jpg",
+"https://i.pinimg.com/564x/1e/00/86/1e008699154987ddf825fc20ed1f4ae8.jpg",
+"https://i.pinimg.com/736x/19/39/5b/19395bae290a038f9b0fde3d9f0fa700.jpg",
+"https://i.pinimg.com/736x/58/ea/34/58ea3480e4d7290dcef976c7eb95f953.jpg",
+"https://png.pngtree.com/background/20250219/original/pngtree-silhouette-of-two-figures-holding-hands-with-city-lights-at-night-picture-image_16060127.jpg",
+"https://wallpapersok.com/images/high/anime-couple-kiss-under-moonlight-iac0asz4r7q6cmn9.jpg"
+];
+
+const messages = [
+"Nhebk b 9albii kol 💖 enti kol chay fi 7yeti 😘",
+"Manajmch nhot 7ad ghirk f 9albi 💞",
+"Kif nkalmk nensa l dinya 💫",
+"Enti ro7i w habyby w kol chay liya 💋",
+"Kol ma nra 3inik 9albi ydo9 🌸",
+"Ble bik 7yeti ma 3andha ta3m 😔❤️",
+"Nchouf fik 9ad ma nhbk 💕",
+"Enti a7la msiba saretli f 7yeti 💘",
+"Kif tkoun m3aya nansa l3alam 🌍💞",
+"Rabi ykhallik lia w may7rmnich mnek 🤲❤️",
+"Nhebek aktar men lkalemat ltnajem t3aber 💞",
+"Kif nra esmkk 9albi ybda ych3el blfar7a🔥💖",
+"Tawa b3id 3lik ama 9albi 3andk 💌",
+"Nhebb nsma3 soutk 9bal manor9od 😴❤️",
+"Enti li dima fi bali w fi 9albi 💭💞",
+"Kol nhar ma3ak ybda b far7a 🌅💗",
+"Enti li 3meltni n3rf chnouwa l7ob 💕",
+"Rou7i terta7 ki tkoun 7adheya 💞😌",
+"Nheb n3ich m3ak 7yeti kmla ❤️‍🔥",
+"Law kan el7ob kalma, ana nkol enti 💝",
+"Kol mara n7s bik n7s b s3ada 💫💋",
+"Bila tha7ktk mta3k nhari ma ykamlch ☀️😘",
+"9albi ybda yebki ki tghib 3liya la7dha 🥺❤️",
+"Kif tadh7ek tdhwbli 9albi 🫶💞",
+"Nhebk men 9albi, b dami w b rou7i ❤️🇹🇳",
+"twa7chtek aktar meli tetsawer 😔💌",
+"Nhebk lyom aktar men lbar7 💖",
+"Kol nji nor9ed  n3ayetlek fi beli 💭❤️",
+"3omri ma nheb 7ad 8irek 💘",
+"N7s rou7i m3ak fi  3alam e5er 🫶🌍"
+];
+
+const card = document.getElementById("card");
+const front = document.getElementById("front");
+const messageEl = document.getElementById("message");
+const timerEl = document.getElementById("timer");
+const notifyEl = document.getElementById("notify");
+
+// Initialize today
+let todayBg = localStorage.getItem("todayBg") || backgrounds[Math.floor(Math.random() * backgrounds.length)];
+front.style.background = `url(${todayBg}) center/cover no-repeat`;
+
+let nextUnlock = localStorage.getItem("nextUnlock");
+let todayMessage = localStorage.getItem("todayMessage");
+let currentIndex = parseInt(localStorage.getItem("currentIndex")) || 0;
+
+// Restore previous state
+function restoreState() {
+  const now = new Date();
+  if (todayMessage && nextUnlock && now < new Date(nextUnlock)) {
+    card.classList.add("flipped");
+    messageEl.innerText = todayMessage;
+    front.style.background = `url(${todayBg}) center/cover no-repeat`;
+  } else {
+    card.classList.remove("flipped");
+    timerEl.innerText = "💖 Click the card!";
+    card.classList.add("pulse");
+  }
+}
+restoreState();
+
+// Update countdown
+function updateTimer() {
+  const now = new Date();
+  if (!nextUnlock) {
+    timerEl.innerText = "💖 Click the card!";
+    return;
+  }
+  const diff = new Date(nextUnlock) - now;
+  if (diff <= 0) {
+    // Automatically reset for next day
+    card.classList.remove("flipped");
+    card.classList.add("pulse");
+    timerEl.innerText = "💖 Click the card!";
+  } else {
+    const hours = Math.floor(diff / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    timerEl.innerText = `Next card in ${hours.toString().padStart(2,'0')}h ${minutes.toString().padStart(2,'0')}m ${seconds.toString().padStart(2,'0')}s ⏳`;
+  }
+}
+setInterval(updateTimer, 1000);
+
+// Show notification
+function showNotification(text) {
+  notifyEl.innerText = text;
+  notifyEl.style.opacity = "1";
+  notifyEl.style.transform = "translateX(-50%) translateY(0)";
+  setTimeout(() => {
+    notifyEl.style.opacity = "0";
+    notifyEl.style.transform = "translateX(-50%) translateY(-20px)";
+  }, 2000);
+}
+
+// Flip card
+card.addEventListener("click", () => {
+  const now = new Date();
+  if (nextUnlock && now < new Date(nextUnlock)) {
+    showNotification("ya ro7i 8odwa arja3 wlh 3raftek hhh 😂");
+    return;
+  }
+
+  card.classList.remove("pulse");
+  card.classList.add("flipped");
+
+  setTimeout(() => {
+    todayMessage = messages[currentIndex % messages.length];
+    currentIndex++;
+    localStorage.setItem("currentIndex", currentIndex);
+
+    messageEl.innerText = todayMessage;
+
+    todayBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+    front.style.background = `url(${todayBg}) center/cover no-repeat`;
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0,0,0,0);
+    nextUnlock = tomorrow;
+
+    localStorage.setItem("nextUnlock", nextUnlock);
+    localStorage.setItem("todayMessage", todayMessage);
+    localStorage.setItem("todayBg", todayBg);
+
+    updateTimer();
+  }, 500);
+});
+
+// Reset button
+document.getElementById("reset").addEventListener("click", () => {
+  localStorage.clear();
+  card.classList.remove("flipped", "pulse");
+  messageEl.innerText = "";
+  todayBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+  front.style.background = `url(${todayBg}) center/cover no-repeat`;
+  nextUnlock = null;
+  currentIndex = 0;
+  timerEl.innerText = "💖 Click the card!";
+});
+
+// Test button (simulate next day)
+document.getElementById("testNext").addEventListener("click", () => {
+  nextUnlock = new Date(Date.now() - 1000); // set nextUnlock to past
+  updateTimer();
+  showNotification("💌 Next day's card is ready!");
+});
+</script>
+</body>
+</html>
